@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Подтверждение регистрации в V-JBAN</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333333;
+            margin-top: 0;
+        }
+
+        p {
+            color: #777777;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Добро пожаловать в V-JBAN!</h1>
+        <p>Пожалуйста, подтвердите ваш аккаунт, перейдя по ссылке ниже:</p>
+        <a class="button" href="{{confirmationLink}}">Подтвердить аккаунт</a>
+        <p class="note">Если вы не регистрировались в V-JBAN, просто проигнорируйте это письмо.</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Подтверждение аккаунта - V-JBAN</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333333;
+            margin-top: 0;
+        }
+
+        svg {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+
+        .fireworks {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #fbc400;
+            animation: fireworks 1s infinite;
+        }
+
+        .person {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            fill: #007bff;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes fireworks {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(100px, -200px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Поздравляем!</h1>
+        <svg class="fireworks" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <circle class="firework" cx="12" cy="12" r="1"></circle>
+            <circle class="firework" cx="12" cy="12" r="1"></circle>
+            <circle class="firework" cx="12" cy="12" r="1"></circle>
+            <circle class="firework" cx="12" cy="12" r="1"></circle>
+        </svg>
+        <svg class="person" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+                d="M12,2C6.48,2,2,6.48,2,12c0,3.31,2.69,6,6,6c3.04,0,5.53-2.26,5.93-5.14C13.79,12.96,12.91,13,12,13 c-4.42,0-8-3.58-8-8S7.58,2,12,2z">
+            </path>
+            <circle cx="16.5" cy="9.5" r="1.5"></circle>
+            <circle cx="7.5" cy="9.5" r="1.5"></circle>
+            <path
+                d="M7,14c2.76,0,5-2.24,5-5c0-0.28-0.04-0.55-0.11-0.81l1.56-1.56C13.91,6.37,14,6.19,14,6c0-2.76-2.24-5-5-5 S4,3.24,4,6c0,0.19,0.09,0.37,0.24,0.63l1.56,1.56C6.04,8.45,6,8.72,6,9C6,11.76,8.24,14,11,14z">
+            </path>
+        </svg>
+        <p>Поздравляем! Ваш аккаунт в сервисе V-JBAN успешно подтвержден.</p>
+    </div>
+</body>     
+</html>

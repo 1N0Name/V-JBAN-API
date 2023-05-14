@@ -1,0 +1,43 @@
+# Ignore the node_modules folder
+node_modules/
+
+# Ignore temporary data files
+*.log
+*.pid
+*.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore npm cache
+.npm
+
+# Exclude compiled files and folders
+dist/
+build/
+out/
+target/
+
+# Ignore configuration files
+.env
+config.js
+
+# Exclude local IDE and code editor settings
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+
+# Ignore files with personal data or secrets
+*.key
+*.pem
+*.env
+
+# Exclude localization files
+*.mo
+*.pot
+
+# Exclude files created by the operating system
+.DS_Store
+Thumbs.db
