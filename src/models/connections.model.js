@@ -20,7 +20,7 @@ Person.hasMany(PersonProject, { foreignKey: 'person_id', as: false });
 Person.hasMany(Token, { foreignKey: 'person_id', as: false });
 
 Project.belongsTo(Person, { foreignKey: 'owner_id', as: false });
-Project.hasMany(Ticket, { foreignKey: 'ticket_id', as: false });
+Project.hasMany(Ticket, { foreignKey: 'project_id', as: false });
 Project.hasMany(Role, { foreignKey: 'project_id', as: false });
 Project.hasMany(Category, { foreignKey: 'project_id', as: false });
 Project.hasMany(Message, { foreignKey: 'project_id', as: false });

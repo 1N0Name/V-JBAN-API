@@ -3,6 +3,7 @@ const PersonController = require('../controllers/person.controller');
 
 const router = express.Router();
 
+router.get('/project/:id', PersonController.getAllPersonsByProject);
 router.get('/', PersonController.getAllPersons);
 router.get('/', PersonController.getPersonById);
 router.post('/', PersonController.createPerson);

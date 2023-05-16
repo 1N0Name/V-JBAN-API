@@ -106,8 +106,10 @@ class TicketService {
 
     async getTicketById(id) {
         try {
+            console.log(id);
             return await Ticket.findByPk(id);
         } catch (error) {
+            console.log(error);
             throw new Error('Failed to get ticket');
         }
     }
@@ -124,7 +126,12 @@ class TicketService {
         try {
             const ticket = await Ticket.findByPk(id);
             if (ticket) {
-                return await ticket.update(ticketData);
+                const updatedTicket = await ticket.update(ticketData);
+
+                const socketManager = require('express').application.get('socketManager');
+                socketManager.notify(ticket.project.id, 'ticketUpdated', { ticketId: ticket.id });
+
+                return updatedTicket;
             } else {
                 return null;
             }

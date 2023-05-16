@@ -1,26 +1,31 @@
 const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 async function sendConfirmationEmail(email, confirmationCode) {
     // Читаем содержимое файла с шаблоном письма
-    const template = fs.readFileSync('../../templates/confirmationEmailTemplate.html', 'utf-8');
+    const templatePath = path.join(__dirname, '../../templates/confirmationEmailTemplate.html');
+    const template = fs.readFileSync(templatePath, 'utf-8');
 
     // Заменяем placeholder {{confirmationLink}} на фактическую ссылку
-    const confirmationLink = `/person/claim-account?confirmation-token=${confirmationCode}&email=${encodeURIComponent(email)}`;
+    const confirmationLink = `https://sgu-dev.ru/api/claim-account?confirmation-token=${confirmationCode}&email=${encodeURIComponent(email)}`;
     const html = template.replace('{{confirmationLink}}', confirmationLink);
 
     // Создайте транспорт для отправки почты
     const transporter = nodemailer.createTransport({
-        service: 'your-email-service-provider', // Например, 'gmail'
+        host: 'smtp.zoho.eu',
+        port: 465,
+        secure: true,
         auth: {
-            user: 'your-email@example.com',
-            pass: 'your-email-password',
+            user: process.env.CONFIRMATION_EMAIL,
+            pass: process.env.CONFIRMATION_EMAIL_PWD,
         },
     });
 
     // Отправьте письмо
     await transporter.sendMail({
-        from: 'your-email@example.com',
+        from: process.env.CONFIRMATION_EMAIL,
         to: email,
         subject: 'Подтверждение аккаунта',
         html: html,
@@ -28,3 +33,7 @@ async function sendConfirmationEmail(email, confirmationCode) {
 
     console.log(`Confirmation email to ${email} sent`);
 }
+
+module.exports = {
+    sendConfirmationEmail,
+};

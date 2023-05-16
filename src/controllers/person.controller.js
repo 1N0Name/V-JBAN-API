@@ -1,6 +1,16 @@
 const PersonService = require('../services/person.service');
 
 class PersonController {
+    async getAllPersonsByProject(req, res, next) {
+        try {
+            const projectId = req.params.id;
+            const persons = await PersonService.getAllPersonsByProject(projectId);
+            res.json(persons);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getAllPersons(req, res, next) {
         try {
             const persons = await PersonService.getAllPersons();

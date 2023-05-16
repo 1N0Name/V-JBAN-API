@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { accessToken, refreshToken } = require('../../config/auth.config');
 const { Person, Token } = require('../models/connections.model');
 const TokenHelper = require('../utils/token.helper');
+const { sendConfirmationEmail } = require('../utils/email.helper');
 
 class AuthService {
     async login(email, password) {

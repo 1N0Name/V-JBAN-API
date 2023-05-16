@@ -27,7 +27,7 @@ class AuthController {
 
         try {
             await claimAccount(email, confirmation_token);
-            res.sendFile(path.join(__dirname, '../../templates/success.html'));
+            res.sendFile(path.join(__dirname, '../../templates/successRegistrationTemplate.html'));
         } catch (error) {
             res.status(400).json({ error: error.message });
         }

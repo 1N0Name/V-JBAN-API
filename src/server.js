@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const http = require('http');
 require('dotenv').config();
 
 const app = express();
@@ -22,6 +23,14 @@ app.use('/api/tickets', authenticateToken, ticketRoute);
 // Middleware
 const errorHandler = require('./middleware/error.middleware');
 app.use(errorHandler);
+
+// WebSocket
+const server = http.createServer(app);
+const SocketManager = require('./utils/socket_manager.helper');
+const socketManager = new SocketManager(server);
+socketManager.init();
+
+app.set('socketManager', socketManager);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

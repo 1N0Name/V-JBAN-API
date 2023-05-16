@@ -17,6 +17,7 @@
     "nodemailer": "^6.9.2",
     "pg": "^8.10.0",
     "sequelize": "^6.31.1",
+    "socket.io": "^4.6.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
