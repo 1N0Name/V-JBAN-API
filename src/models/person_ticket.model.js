@@ -1,19 +1,19 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/db.config');
 
-const Role = sequelize.define(
-    'role',
+const PersonTicket = sequelize.define(
+    'person_ticket',
     {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
-        project_id: {
+        person_id: {
             type: DataTypes.INTEGER,
         },
-        role_name: {
-            type: DataTypes.STRING(255),
+        ticket_id: {
+            type: DataTypes.INTEGER,
         },
     },
     {
@@ -22,4 +22,4 @@ const Role = sequelize.define(
     }
 );
 
-module.exports = Role;
+module.exports = PersonTicket;

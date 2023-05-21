@@ -1,8 +1,8 @@
 const {
     Person,
+    PersonTicket,
     Project,
     Ticket,
-    TicketResponsible,
     TicketTag,
     Tag,
     TagCategory
@@ -20,37 +20,24 @@ class TicketService {
                 where: { project_id: projectId },
                 include: [
                     { model: TicketTag, include: [{ model: Tag, attributes: ['name', 'category_id'], include: [{ model: TagCategory, attributes: ['name'] }] }] },
-                    { model: TicketResponsible, include: [{ model: Person, attributes: ['first_name', 'last_name'] }] },
+                    { model: PersonTicket, include: [{ model: Person, attributes: ['first_name', 'last_name'] }] },
                 ],
                 attributes: ['id', 'title', 'descr', 'category_id', 'start_date', 'end_date'],
             });
 
-            const formattedTickets = tickets.map((ticket) => {
-                const tags = ticket.ticket_tags.map((ticketTag) => ({
-                    tag_category: ticketTag.tag.tag_category.name,
-                    value: ticketTag.tag.name,
-                }));
-
-                const responsible = ticket.ticket_responsibles.map((responsible) => ({
-                    first_name: responsible.person.first_name,
-                    last_name: responsible.person.last_name,
-                }));
-
-                return {
-                    id: ticket.id,
-                    title: ticket.title,
-                    description: ticket.descr,
-                    category_id: ticket.category_id,
-                    tags,
-                    start_date: ticket.start_date,
-                    end_date: ticket.end_date,
-                    responsible,
-                };
-            });
+            const formattedTickets = tickets.map(({ id, title, descr, category_id, start_date, end_date, ticket_tags, person_tickets }) => ({
+                id,
+                title,
+                description: descr,
+                category_id,
+                tags: ticket_tags.map(({ tag }) => ({ tag_category: tag.tag_category.name, value: tag.name })),
+                start_date,
+                end_date,
+                responsible: person_tickets.map(({ person }) => ({ first_name: person.first_name, last_name: person.last_name })),
+            }));
 
             return formattedTickets;
         } catch (error) {
-            console.log(error);
             throw new Error('Failed to fetch tickets');
         }
     }
@@ -62,7 +49,7 @@ class TicketService {
                 throw new Error('Person not found');
             }
 
-            const tickets = await TicketResponsible.findAll({
+            const tickets = await PersonTicket.findAll({
                 where: { person_id: userId },
                 include: [
                     {
@@ -106,7 +93,6 @@ class TicketService {
 
     async getTicketById(id) {
         try {
-            console.log(id);
             return await Ticket.findByPk(id);
         } catch (error) {
             console.log(error);
@@ -116,7 +102,12 @@ class TicketService {
 
     async createTicket(ticketData) {
         try {
-            return await Ticket.create(ticketData);
+            const ticket = await Ticket.create(ticketData);
+
+            const socketManager = require('express').application.get('socketManager');
+            socketManager.notify(ticket.project.id, 'ticketCreated', { ticketId: ticket.id });
+
+            return ticket;
         } catch (error) {
             throw new Error('Failed to create ticket');
         }

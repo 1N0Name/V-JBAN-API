@@ -1,43 +1,48 @@
+const fs = require('fs');
+const path = require('path');
+const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
 const {
     Person,
-    PersonProject,
+    PersonRole,
     Role,
 } = require('../models/connections.model');
+const {
+    sendResetPasswordEmail,
+    replaceImageWithBase64,
+} = require('../utils/email.helper');
+const {
+    InvalidResetTokenError,
+    UserNotFound,
+} = require('../utils/error.helper');
 
 class PersonService {
     async getAllPersonsByProject(projectId) {
         try {
-            const persons = await PersonProject.findAll({
-                where: { project_id: projectId },
+            const usersWithRoles = await PersonRole.findAll({
                 include: [
-                    {
-                        model: Person,
-                        attributes: ['id', 'first_name', 'last_name'],
-                    },
-                    {
-                        model: Role,
-                        attributes: ['id', 'role_name']
-                    }
-                ],
-                attributes: []
+                    { model: Person },
+                    { model: Role, where: { project_id: projectId } }
+                ]
             });
 
-            const formattedResponse = persons.map(person => {
-                const { first_name, last_name } = person.person;
-                const { id: role_id, role_name } = person.role;
+            const usersWithRolesFormatted = usersWithRoles.reduce((result, { person, role }) => {
+                const { id, first_name, last_name } = person;
+                const { id: role_id, role_name } = role;
 
-                return {
-                    id: person.person.id,
-                    first_name,
-                    last_name,
-                    role_id,
-                    role_name
-                };
-            });
+                const existingUser = result.find(user => user.id === id);
 
-            return { employees: formattedResponse };
+                if (existingUser) {
+                    existingUser.roles.push({ role_id, role_name });
+                } else {
+                    result.push({ id, first_name, last_name, roles: [{ role_id, role_name }] });
+                }
+
+                return result;
+            }, []);
+
+            return usersWithRolesFormatted;
         } catch(error) {
-            console.log(error);
             throw new Error('Failed to fetch all users');
         }
     }
@@ -95,6 +100,59 @@ class PersonService {
         } catch (error) {
             throw new Error('Failed to delete person');
         }
+    }
+
+    async sendPasswordResetConfirmation(email) {
+        const person = await Person.findOne({ where: { email } });
+        if (!person) {
+            throw new UserNotFound();
+        }
+
+        const resetToken = uuidv4();
+        person.reset_token = resetToken;
+        await person.save();
+
+        const resetLink = `https://sgu-dev.ru/api/user/reset-password?confirmation-token=${resetToken}&email=${encodeURIComponent(email)}`;
+        // Отправка письма с подтверждением сброса пароля
+        await sendResetPasswordEmail(email, resetLink);
+    }
+
+    async createNewPasswordTemplate(resetToken, email) {
+        const person = await Person.findOne({ where: { email, reset_token: resetToken } });
+        if (!person) {
+            throw new UserNotFound();
+        }
+
+        const htmlPath = path.join(__dirname, '../../templates/changePasswordTemplate.html');
+        let htmlTemplate = fs.readFileSync(htmlPath, 'utf-8');
+        htmlTemplate.replace('{{changePassword}}', `https://sgu-dev.ru/api/user/reset-password?confirmation-token=${resetToken}&email=${encodeURIComponent(email)}`);
+
+        const logoPath = path.join(__dirname, '../../assets/images/logo.png');
+        htmlTemplate = await replaceImageWithBase64(htmlTemplate, logoPath, 'logo');
+
+        const mouseClickPath = path.join(__dirname, '../../assets/images/mouse_click.png');
+        htmlTemplate = await replaceImageWithBase64(htmlTemplate, mouseClickPath, 'click');
+
+        return htmlTemplate;
+    }
+
+    async changePassword(resetToken, newPassword, email) {
+        const person = await Person.findOne({ where: { email, reset_token: resetToken } });
+        if (!person) {
+            throw new InvalidResetTokenError();
+        }
+
+        person.pwd = await bcrypt.hash(newPassword, 10);
+        person.reset_token = null;
+        await person.save();
+
+        const htmlPath = path.join(__dirname, '../../templates/successPasswordChangeTemplate.html');
+        let htmlTemplate = fs.readFileSync(htmlPath, 'utf-8');
+
+        const logoPath = path.join(__dirname, '../../assets/images/logo.png');
+        htmlTemplate = await replaceImageWithBase64(htmlTemplate, logoPath, 'logo');
+
+        return htmlTemplate;
     }
 }
 

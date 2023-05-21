@@ -14,8 +14,6 @@ function errorHandler(err, req, res, next) {
         });
     }
 
-    // Handle other types of errors
-
     // Default response
     return res.status(500).json({ error: 'Internal Server Error' });
 }

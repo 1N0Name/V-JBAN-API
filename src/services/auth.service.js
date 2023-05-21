@@ -1,25 +1,38 @@
+const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const { accessToken, refreshToken } = require('../../config/auth.config');
 const { Person, Token } = require('../models/connections.model');
 const TokenHelper = require('../utils/token.helper');
-const { sendConfirmationEmail } = require('../utils/email.helper');
+const {
+    sendConfirmationEmail,
+    replaceImageWithBase64,
+} = require('../utils/email.helper');
+const {
+    EmailNotConfirmedError,
+    InvalidCredentialsError,
+    EmailAlreadyRegisteredError,
+    InvalidRegistrationCodeError,
+    InvalidRefreshTokenError,
+    UserNotFound,
+} = require('../utils/error.helper');
 
 class AuthService {
     async login(email, password) {
         const person = await Person.findOne({ where: { email } });
         if (!person) {
-            throw new Error('Invalid email or password');
+            throw new InvalidCredentialsError();
         }
 
         // Проверяем подтверждение почты
         if (person.confirmation_code !== null) {
-            throw new Error('Email is not confirmed');
+            throw new EmailNotConfirmedError();
         }
 
         const isPasswordValid = await bcrypt.compare(password, person.pwd);
         if (!isPasswordValid) {
-            throw new Error('Invalid email or password');
+            throw new InvalidCredentialsError();
         }
 
         const accessTokenValue = TokenHelper.generateAccessToken(person, accessToken.salt, accessToken.expired);
@@ -33,7 +46,7 @@ class AuthService {
     async register(firstName, lastName, email, password, gender) {
         const existingPerson = await Person.findOne({ where: { email } });
         if (existingPerson) {
-            throw new Error('Email is already registered');
+            throw new EmailAlreadyRegisteredError();
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -54,25 +67,34 @@ class AuthService {
     async claimAccount(email, confirmationToken) {
         const person = await Person.findOne({ where: { email, confirmation_code: confirmationToken } });
         if (!person) {
-            throw new Error('Invalid confirmation token');
+            throw new InvalidRegistrationCodeError();
         }
 
         // Устанавливаем confirmation_code в null для подтверждения email
         person.confirmation_code = null;
         await person.save();
+
+        // Формируем отчет для пользователя
+        const htmlPath = path.join(__dirname, '../../templates/successRegistrationTemplate.html');
+        let htmlTemplate = fs.readFileSync(htmlPath, 'utf-8');
+
+        const logoPath = path.join(__dirname, '../../assets/images/logo.png');
+        htmlTemplate = await replaceImageWithBase64(htmlTemplate, logoPath, 'logo');
+
+        return htmlTemplate;
     }
 
     async refreshToken(refreshTokenValue) {
         const token = await Token.findOne({ where: { token: refreshTokenValue } });
         if (!token) {
-            throw new Error('Invalid refresh token');
+            throw new InvalidRefreshTokenError();
         }
 
         await Token.destroy({ where: { id: token.id } });
 
         const person = await Person.findByPk(token.person_id);
         if (!person) {
-            throw new Error('Invalid refresh token');
+            throw new UserNotFound();
         }
 
         const newAccessTokenValue = TokenHelper.generateAccessToken(person, accessToken.salt, accessToken.expired);

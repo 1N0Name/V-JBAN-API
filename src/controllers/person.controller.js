@@ -60,6 +60,44 @@ class PersonController {
             next(error);
         }
     }
+
+    async sendPasswordResetConfirmation(req, res, next) {
+        const { email } = req.body;
+
+        try {
+            await PersonService.sendPasswordResetConfirmation(email);
+            res.sendStatus(200);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async createNewPassword(req, res, next) {
+        const { "confirmation-token": confirmationToken, email } = req.query;
+
+        try {
+            const htmlTemplate = await PersonService.createNewPasswordTemplate(confirmationToken, email);
+
+            res.setHeader('Content-Type', 'text/html');
+            res.send(htmlTemplate);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async changePassword(req, res, next) {
+        const { "confirmation-token": confirmationToken, email } = req.query;
+        const { newPassword } = req.body;
+        
+        try {
+            const htmlTemplate = await PersonService.changePassword(confirmationToken, newPassword, email);
+
+            res.setHeader('Content-Type', 'text/html');
+            res.send(htmlTemplate);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new PersonController();

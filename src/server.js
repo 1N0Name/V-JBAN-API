@@ -16,9 +16,9 @@ const ticketRoute = require('./routes/ticket.route')
 const { authenticateToken } = require('./middleware/auth.middleware');
 
 app.use('/api', authRoute);
-app.use('/api/users', authenticateToken, personRoute);
-app.use('/api/projects', authenticateToken, projectRoute);
-app.use('/api/tickets', authenticateToken, ticketRoute);
+app.use('/api/user', personRoute);
+app.use('/api/project', authenticateToken, projectRoute);
+app.use('/api/ticket', authenticateToken, ticketRoute);
 
 // Middleware
 const errorHandler = require('./middleware/error.middleware');
