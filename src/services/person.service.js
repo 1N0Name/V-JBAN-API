@@ -1,16 +1,13 @@
-const fs = require('fs');
-const path = require('path');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
+
 const {
     Person,
     PersonRole,
     Role,
 } = require('../models/connections.model');
-const {
-    sendResetPasswordEmail,
-    replaceImageWithBase64,
-} = require('../utils/email.helper');
+const { InformationEmail } = require('../utils/email.helper');
 const {
     InvalidResetTokenError,
     UserNotFound,
@@ -102,6 +99,12 @@ class PersonService {
         }
     }
 
+    async getPasswordResetPage() {
+        return {
+            host: process.env.SERVER_HOST
+        };
+    }
+
     async sendPasswordResetConfirmation(email) {
         const person = await Person.findOne({ where: { email } });
         if (!person) {
@@ -112,9 +115,17 @@ class PersonService {
         person.reset_token = resetToken;
         await person.save();
 
-        const resetLink = `https://sgu-dev.ru/api/user/reset-password?confirmation-token=${resetToken}&email=${encodeURIComponent(email)}`;
-        // Отправка письма с подтверждением сброса пароля
-        await sendResetPasswordEmail(email, resetLink);
+        const informationEmail = new InformationEmail();
+        informationEmail.send(
+            email,
+            'Сброс пароля',
+            {
+                mainText: 'Здравствуйте. С вашего аккаунта поступил запрос на восстановление пароля. Для того, чтобы его сменить, нажмите на кнопку ниже:',
+                btnText: 'Сменить пароль',
+                targetLink: `${process.env.SERVER_HOST}/api/user/reset-password?confirmation-token=${resetToken}&email=${encodeURIComponent(email)}`,
+                secondaryText: 'Если Вы не совершали этого действия, просто проигнорируйте это письмо.',
+            }
+        );
     }
 
     async createNewPasswordTemplate(resetToken, email) {
@@ -123,17 +134,9 @@ class PersonService {
             throw new UserNotFound();
         }
 
-        const htmlPath = path.join(__dirname, '../../templates/changePasswordTemplate.html');
-        let htmlTemplate = fs.readFileSync(htmlPath, 'utf-8');
-        htmlTemplate.replace('{{changePassword}}', `https://sgu-dev.ru/api/user/reset-password?confirmation-token=${resetToken}&email=${encodeURIComponent(email)}`);
-
-        const logoPath = path.join(__dirname, '../../assets/images/logo.png');
-        htmlTemplate = await replaceImageWithBase64(htmlTemplate, logoPath, 'logo');
-
-        const mouseClickPath = path.join(__dirname, '../../assets/images/mouse_click.png');
-        htmlTemplate = await replaceImageWithBase64(htmlTemplate, mouseClickPath, 'click');
-
-        return htmlTemplate;
+        return {
+            host: process.env.SERVER_HOST
+        };
     }
 
     async changePassword(resetToken, newPassword, email) {
@@ -146,13 +149,11 @@ class PersonService {
         person.reset_token = null;
         await person.save();
 
-        const htmlPath = path.join(__dirname, '../../templates/successPasswordChangeTemplate.html');
-        let htmlTemplate = fs.readFileSync(htmlPath, 'utf-8');
-
-        const logoPath = path.join(__dirname, '../../assets/images/logo.png');
-        htmlTemplate = await replaceImageWithBase64(htmlTemplate, logoPath, 'logo');
-
-        return htmlTemplate;
+        return {
+            host: process.env.SERVER_HOST,
+            title: 'V-JBAN - Пароль изменен',
+            infoText: 'Ваш пароль успешно изменен'
+        };
     }
 }
 

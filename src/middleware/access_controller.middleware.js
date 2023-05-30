@@ -23,7 +23,8 @@ function AccessController() {
         const Model = { 
             'person': Person,
             'project': Project,
-            'ticket': Ticket
+            'ticket': Ticket,
+            'role': Role
         }[resourceType];
         const resourceId = req.params.id;
 

@@ -14,6 +14,7 @@ const Token = require('./token.model');
 const PersonRole = require('./person_role.model');
 const PersonTicket = require('./person_ticket.model');
 const RoleAction = require('./role_action.model');
+const Invite = require('./invite.model');
 
 // Action
 Action.hasMany(RoleAction, { foreignKey: 'action_id', as: false });
@@ -106,4 +107,5 @@ module.exports = {
     PersonRole,
     PersonTicket,
     RoleAction,
+    Invite,
 };

@@ -1,23 +1,20 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/db.config');
 
-const ProjectCategory = sequelize.define(
-    'project_category',
+const Invite = sequelize.define(
+    'invite',
     {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
-        title: {
-            type: DataTypes.STRING(255),
+        token: {
+            type: DataTypes.STRING(300),
+            allowNull: false,
         },
-        project_id: {
-            type: DataTypes.INTEGER,
-        },
-        isFinal: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        created_at: {
+            type: DataTypes.DATE,
         },
     },
     {
@@ -26,4 +23,4 @@ const ProjectCategory = sequelize.define(
     }
 );
 
-module.exports = ProjectCategory;
+module.exports = Invite;

@@ -9,8 +9,8 @@ router.get('/project/:id', AccessController(), TicketController.getAllProjectTic
 
 // router.get('/', AccessController('ticket') , TicketController.getAllTickets);
 router.get('/:id', AccessController(), TicketController.getTicketById);
-router.post('/', AccessController('ticket'), TicketController.createTicket);
-router.put('/:id', AccessController('ticket'), TicketController.updateTicket);
-router.delete('/:id', AccessController('ticket'), TicketController.deleteTicket);
+router.post('/', AccessController(), TicketController.createTicket);
+router.put('/:id', AccessController(), TicketController.updateTicket);
+router.delete('/:id', AccessController(), TicketController.deleteTicket);
 
 module.exports = router;

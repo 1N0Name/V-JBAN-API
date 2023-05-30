@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>V-JBAN - Пароль изменен</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 0 5px;
+            background-color: #fefefe;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(128, 128, 128, 0.3);
+            transition: opacity 1s ease-in-out;
+        }
+    
+        .content {
+            width: 90%;
+            margin: 40px auto;
+        }
+    
+        h1, h2 {
+            color: #404040;
+            text-align: center;
+            margin: 15px 0;
+        }
+    
+        h1 {
+            font-size: 36px;
+            margin-top: 0;
+        }
+
+        h1 img {
+            width: 80px;
+            height: 80px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    
+        h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+    
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        input {
+            padding: 10px;
+        }
+    
+        input, .input-container {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d4d4d8;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #71717a;
+            outline: none;
+        }
+
+        .input-container {
+            display: flex;
+            overflow: hidden;
+        }
+
+        input:placeholder-shown {
+            font-style: italic;
+        }
+
+        input:focus, .input-container:focus-within {
+            border-color: #0056b3;
+        }
+    
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    
+        .btn img {
+            width: 18px;
+            height: 18px;
+            margin-right: 15px;
+        }
+    
+        .btn:focus {
+            outline: none;
+        }
+    
+        .password-field {
+            flex-grow: 1;
+            border: none;
+        }
+
+        .password-toggle {
+            border: none;
+            background: #007bff;
+            color: white; 
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .password-toggle i {
+            padding: 0 5px;
+        }
+
+        select.input-field {
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d4d4d8;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #71717a;
+            outline: none;
+            appearance: none;
+            background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%2371717a' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center/8px 10px;
+            background-color: #fff;
+        }
+
+        .copyright {
+            font-size: 14px;
+            text-align: center;
+            color: #999;
+        }
+        </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>
+                <img src="<%= host %>/assets/images/logo.png" alt="V-JBAN">
+                V-JBAN
+            </h1>
+            <h2>Регистрация</h2>
+            <form id="registrationForm">
+                <div class="form-group required">
+                    <input type="email" class="input-field" id="email" placeholder="Email*" required>
+                </div>
+                <div class="form-group required">
+                    <input type="text" class="input-field" id="firstName" placeholder="Имя*" required>
+                </div>
+                <div class="form-group required">
+                    <input type="text" class="input-field" id="lastName" placeholder="Фамилия*" required>
+                </div>
+                <div class="form-group required">
+                    <select class="input-field" id="gender" required>
+                        <option value="" disabled selected>Выберите пол*</option>
+                        <option value="1">Мужской</option>
+                        <option value="2">Женский</option>
+                    </select>
+                </div>
+                <div class="form-group required">
+                    <div class="input-container">
+                        <input class="input-field password-field" type="password" placeholder="Пароль*" required>
+                        <button class="password-toggle" type="button" onclick="togglePasswordVisibility(this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <div class="input-container">
+                        <input class="input-field password-field" type="password" placeholder="Подвердите пароль*" required>
+                        <button class="password-toggle" type="button" onclick="togglePasswordVisibility(this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn" onclick="submitForm()">
+                    <img src="<%= host %>/assets/images/mouse_click.png" alt="Подтвердить">
+                    <span>Продолжить</span>
+                </button>
+            </form>
+            <footer>
+                <p class="copyright">&copy; 2023 V-JBAN. Все права защищены.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/sweetalert2@11"></script>
+    <script>
+        const togglePasswordVisibility = (toggleButton) => {
+            const passwordInput = toggleButton.previousElementSibling;
+            const toggleIcon = toggleButton.children[0];
+
+            const isPasswordVisible = passwordInput.type === "text";
+
+            passwordInput.type = isPasswordVisible ? "password" : "text";
+            toggleIcon.className = isPasswordVisible ? "bi bi-eye" : "bi bi-eye-slash";
+        };
+
+        const isInputValid = (formValues) => formValues.every(Boolean);
+        const isEmailValid = (email) => /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email);
+        const arePasswordsEqual = (password, confirmPassword) => password === confirmPassword;
+
+        const postRegister = (userData) =>
+            fetch('<%= host %>/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+        const submitForm = () => {
+            const inputFields = document.querySelectorAll('.input-field');
+            const formValues = [...inputFields].map(input => input.value);
+            const [email, firstName, lastName, password, confirmPassword, gender] = formValues;
+
+            if (!isInputValid(formValues)) {
+                return Swal.fire('Ошибка', 'Все поля должны быть заполнены', 'error');
+            }
+
+            if (!isEmailValid(email)) {
+                return Swal.fire('Ошибка', 'Email некорректный', 'error');
+            }
+
+            if (!arePasswordsEqual(password, confirmPassword)) {
+                return Swal.fire('Ошибка', 'Пароли не совпадают', 'error');
+            }
+
+            const userData = { firstName, lastName, email, password, gender };
+
+            postRegister(userData)
+                .then(response => response.ok ? response.text() : response.json())
+                .then(result => {
+                    if (typeof result === "string" && result === 'Created') {
+                        Swal.fire('Успех', 'Регистрация прошла успешно. Пожалуйста, подтвердите ваш email, перейдя по ссылке в сообщении, которое мы вам отправили.', 'success');
+                    } else {
+                        Swal.fire('Ошибка', result.error_msg, 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        };
+    </script>
+</body>
+
+</html>

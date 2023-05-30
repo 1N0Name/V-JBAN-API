@@ -1,17 +1,17 @@
 const jwt = require('jsonwebtoken');
 
 class TokenHelper {
-    generateAccessToken(person, salt, expiration) {
-        const payload = {
-            id: person.id,
-        };
-
+    generateAccessToken(payload, salt, expiration) {
         return jwt.sign(payload, salt, { expiresIn: expiration });
     }
 
     generateRefreshToken(salt, expiration) {
         const refreshToken = jwt.sign({}, salt, { expiresIn: expiration });
         return refreshToken;
+    }
+
+    generateInvitationToken(payload, salt, expiration) {
+        return jwt.sign(payload, salt, { expiresIn: expiration });
     }
 }
 

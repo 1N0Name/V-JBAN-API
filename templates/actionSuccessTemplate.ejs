@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>V-JBAN - Регистрация завершена</title>
+    <title><%= title %></title>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -14,19 +14,19 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #fff;
             font-family: 'Montserrat', sans-serif;
         }
 
         .container {
             width: 600px;
             padding: 20px;
-            background-color: #fff;
+            background-color: #fefefe;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(128, 128, 128, 0.3);
             display: flex;
             flex-direction: column;
-            animation: closePage 1s linear 10s forwards;
+            transition: opacity 1s ease-in-out;
         }
 
         header {
@@ -64,14 +64,6 @@
             color: #333;
         }
 
-        .column:nth-child(1) {
-            flex: 1;
-        }
-
-        .column:nth-child(2) {
-            flex: 2;
-        }
-
         .alert {
             padding: 10px;
             background-color: #ffeb3b;
@@ -80,51 +72,47 @@
             text-align: center;
         }
 
-        .footer {
-            color: #999;
+        .copyright {
             font-size: 14px;
             text-align: center;
-            padding-top: 10px;
-        }
-
-        @keyframes closePage {
-            0% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 0;
-            }
-            100% {
-                display: none;
-            }
+            color: #999;
         }
     </style>
 </head>
+
 <body>
-     <div class="container">
+    <div class="container">
         <header>
-            <div class="alert" id="countdown-alert">Страница будет автоматически закрыта через 10 секунд.</div>
+            <div class="alert" id="countdown-alert">Страница будет автоматически закрыта через <span
+                    id="timer">10</span> сек.</div>
         </header>
         <div class="content">
             <div class="column">
-                <img src="cid:logo" alt="V-JBAN">
+                <img src="<%= host %>/assets/images/logo.png" alt="V-JBAN">
             </div>
             <div class="column">
-                <p>Ваш аккаунт успешно подтвержден</p>
+                <p><%= infoText %></p>
             </div>
         </div>
-        <footer class="footer">
-            <p>&copy; 2023 V-JBAN. Все права защищены.</p>
+        <footer>
+            <p class="copyright">&copy; 2023 V-JBAN. Все права защищены.</p>
         </footer>
     </div>
-    
+
     <script>
-        setTimeout(function () {
-            document.getElementById('countdown-alert').style.opacity = 0;
-            setTimeout(function () {
-                window.close();
-            }, 1000);
-        }, 9500);
+        var counter = 10;
+        var countdown = setInterval(function () {
+            counter--;
+            document.getElementById('timer').textContent = counter;
+            if (counter === 0) {
+                clearInterval(countdown);
+                var container = document.querySelector('.container');
+                container.style.opacity = '0';
+                setTimeout(function () {
+                    window.close();
+                }, 1000);
+            }
+        }, 1000);
     </script>
 </body>
 

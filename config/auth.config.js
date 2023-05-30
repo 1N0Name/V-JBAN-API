@@ -11,4 +11,9 @@ module.exports = {
         expired: process.env.REFRESH_TOKEN_EXPIRED,
         type: 'refresh',
     },
+    inviteToken: {
+        salt: process.env.INVITE_TOKEN_SALT,
+        expired: process.env.INVITE_TOKEN_EXPIRED,
+        type: 'refresh',
+    },
 };

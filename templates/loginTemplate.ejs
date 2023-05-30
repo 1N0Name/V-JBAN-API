@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>V-JBAN - Пароль изменен</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 0 5px;
+            background-color: #fefefe;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(128, 128, 128, 0.3);
+            transition: opacity 1s ease-in-out;
+        }
+
+        .content {
+            width: 90%;
+            margin: 40px auto;
+        }
+
+        h1,
+        h2 {
+            color: #404040;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-top: 0;
+        }
+
+        h1 img {
+            width: 80px;
+            height: 80px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        input {
+            padding: 10px;
+        }
+
+        input,
+        .input-container {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d4d4d8;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #71717a;
+            outline: none;
+        }
+
+        .input-container {
+            display: flex;
+            overflow: hidden;
+        }
+
+        input:placeholder-shown {
+            font-style: italic;
+        }
+
+        input:focus,
+        .input-container:focus-within {
+            border-color: #0056b3;
+        }
+
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn img {
+            width: 18px;
+            height: 18px;
+            margin-right: 15px;
+        }
+
+        .btn:focus {
+            outline: none;
+        }
+
+        .password-field {
+            flex-grow: 1;
+            border: none;
+        }
+
+        .password-toggle {
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .password-toggle i {
+            padding: 0 5px;
+        }
+
+        .forgot-password, .create-account {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .forgot-password {
+            text-align: right;
+        }
+
+        .copyright {
+            font-size: 14px;
+            text-align: center;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>
+                <img src="<%= host %>/assets/images/logo.png" alt="V-JBAN">
+                V-JBAN
+            </h1>
+            <h2>Войти в аккаунт</h2>
+            <form id="registrationForm">
+                <div class="form-group required">
+                    <input type="email" class="input-field" id="email" placeholder="Email*" required>
+                </div>
+                <div class="form-group required">
+                    <div class="input-container">
+                        <input class="input-field password-field" type="password" placeholder="Текущий пароль*"
+                            required>
+                        <button class="password-toggle" type="button" onclick="togglePasswordVisibility(this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <a href="<%= host %>/api/user/forgot-password" class="forgot-password">Забыли пароль?</a>
+                </div>
+                <button type="button" class="btn" onclick="submitForm()">
+                    <img src="<%= host %>/assets/images/mouse_click.png" alt="Подтвердить">
+                    <span>Продолжить</span>
+                </button>
+                <p class="create-account">Еще не зарегистрированы? <a href="<%= host %>/api/register" class="">Создайте аккаунт!</a></p>
+            </form>
+            <footer>
+                <p class="copyright">&copy; 2023 V-JBAN. Все права защищены.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/sweetalert2@11"></script>
+    <script>
+        const queryString = window.location.search;
+
+        const isInputValid = (formValues) => formValues.every(Boolean);
+
+        const togglePasswordVisibility = (toggleButton) => {
+            const passwordInput = toggleButton.previousElementSibling;
+            const toggleIcon = toggleButton.children[0];
+
+            const isPasswordVisible = passwordInput.type === "text";
+
+            passwordInput.type = isPasswordVisible ? "password" : "text";
+            toggleIcon.className = isPasswordVisible ? "bi bi-eye" : "bi bi-eye-slash";
+        };
+
+        const postLogin = (userData) =>
+            fetch(`<%= host %>/api/login${queryString}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+        const submitForm = () => {
+            const inputFields = document.querySelectorAll('.input-field');
+            const formValues = [...inputFields].map(input => input.value);
+            const [email, password] = formValues;
+
+            if (!isInputValid(formValues)) {
+                return Swal.fire('Ошибка', 'Все поля должны быть заполнены', 'error');
+            }
+
+            const userData = { email, password };
+
+            postLogin(userData)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.accessToken && data.refreshToken) {
+                        Swal.fire('Успешно!', 'Вы успешно авторизовались!', 'success');
+                    } else if (status_msg) {
+                        Swal.fire('Успешно!', `${data.status_msg}`, 'success');
+                    } else if (data.error_code && data.error_msg) {
+                        Swal.fire('Ошибка!', `Код ошибки: ${data.error_code}. Сообщение: ${data.error_msg}`, 'error');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Ошибка!', 'Что-то пошло не так при попытке авторизации.', 'error');
+                });
+        };
+
+        function validateEmail(email) {
+            var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function postForgotPassword(userData) {
+            return fetch(`<%= host %>/api/user/forgot-password${queryString}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+        }
+
+        document.querySelector('.forgot-password').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const emailInput = document.querySelector('#email');
+            const email = emailInput.value;
+
+            if (!email || !validateEmail(email)) {
+                Swal.fire('Ошибка', 'Пожалуйста, введите правильный адрес электронной почты', 'error');
+            } else {
+                postForgotPassword({ email: email })
+                    .then(response => response.text)
+                    .then(data => {
+                        Swal.fire('Успешно!', 'Инструкции по восстановлению пароля отправлены на вашу электронную почту!', 'success');
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Ошибка!', 'Что-то пошло не так при попытке отправить запрос на восстановление пароля.', 'error');
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>

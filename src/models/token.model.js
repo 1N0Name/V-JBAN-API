@@ -17,6 +17,9 @@ const Token = sequelize.define(
             type: DataTypes.STRING(300),
             allowNull: false,
         },
+        created_at: {
+            type: DataTypes.DATE,
+        },
     },
     {
         freezeTableName: true,

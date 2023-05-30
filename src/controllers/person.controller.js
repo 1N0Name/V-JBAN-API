@@ -1,3 +1,5 @@
+const ejs = require('ejs');
+const path = require('path');
 const PersonService = require('../services/person.service');
 
 class PersonController {
@@ -61,6 +63,17 @@ class PersonController {
         }
     }
 
+    async getPasswordResetPage(req, res, next) {
+        try {
+            const data = await PersonService.getPasswordResetPage(confirmationToken, email);
+
+            const str = await ejs.renderFile(path.join(__dirname, '../../templates', 'changePasswordTemplate.ejs'), data);
+            res.send(str);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async sendPasswordResetConfirmation(req, res, next) {
         const { email } = req.body;
 
@@ -76,10 +89,10 @@ class PersonController {
         const { "confirmation-token": confirmationToken, email } = req.query;
 
         try {
-            const htmlTemplate = await PersonService.createNewPasswordTemplate(confirmationToken, email);
+            const data = await PersonService.createNewPasswordTemplate(confirmationToken, email);
 
-            res.setHeader('Content-Type', 'text/html');
-            res.send(htmlTemplate);
+            const str = await ejs.renderFile(path.join(__dirname, '../../templates', 'changePasswordTemplate.ejs'), data);
+            res.send(str);
         } catch (error) {
             next(error);
         }
@@ -90,10 +103,11 @@ class PersonController {
         const { newPassword } = req.body;
         
         try {
-            const htmlTemplate = await PersonService.changePassword(confirmationToken, newPassword, email);
+            const data = await PersonService.changePassword(confirmationToken, newPassword, email);
 
-            res.setHeader('Content-Type', 'text/html');
-            res.send(htmlTemplate);
+            const str = await ejs.renderFile(path.join(__dirname, '../../templates', 'actionSuccessTemplate.ejs'), data);
+            res.set('Content-Type', 'text/html');
+            res.send(str);
         } catch (error) {
             next(error);
         }

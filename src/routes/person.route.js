@@ -5,11 +5,12 @@ const PersonController = require('../controllers/person.controller');
 
 const router = express.Router();
 
+router.get('/forgot-password', PersonController.getPasswordResetPage);
 router.post('/forgot-password', PersonController.sendPasswordResetConfirmation);
 router.get('/reset-password', PersonController.createNewPassword);
 router.post('/reset-password', PersonController.changePassword);
 
-router.get('/project/:id', authenticateToken, AccessController('role'), PersonController.getAllPersonsByProject);
+router.get('/project/:id', authenticateToken, AccessController(), PersonController.getAllPersonsByProject);
 // router.get('/', PersonController.getAllPersons);
 router.get('/:id', authenticateToken, PersonController.getPersonById);
 router.post('/', authenticateToken, PersonController.createPerson);
