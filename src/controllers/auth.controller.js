@@ -42,8 +42,8 @@ class AuthController {
         try {
             if (token) {
                 // Если токен существует, добавляем пользователя в проект
-                await AuthService.addUserToProject(email, token);
-                res.json('Вы были успешно добавлены в проект!');
+                const status = await AuthService.addUserToProject(email, token);
+                res.json(status);
             } else {
                 // Иначе, авторизуем пользователя
                 const tokens = await AuthService.login(email, password);

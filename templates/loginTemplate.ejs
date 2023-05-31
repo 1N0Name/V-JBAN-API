@@ -239,10 +239,10 @@
                 .then(data => {
                     if (data.accessToken && data.refreshToken) {
                         Swal.fire('Успешно!', 'Вы успешно авторизовались!', 'success');
-                    } else if (status_msg) {
+                    } else if (data.status_msg) {
                         Swal.fire('Успешно!', `${data.status_msg}`, 'success');
                     } else if (data.error_code && data.error_msg) {
-                        Swal.fire('Ошибка!', `Код ошибки: ${data.error_code}. Сообщение: ${data.error_msg}`, 'error');
+                        Swal.fire('Ошибка!', `${data.error_msg}`, 'error');
                     }
                 }).catch(error => {
                     console.error('Error:', error);

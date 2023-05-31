@@ -123,7 +123,7 @@ class PersonService {
                 mainText: 'Здравствуйте. С вашего аккаунта поступил запрос на восстановление пароля. Для того, чтобы его сменить, нажмите на кнопку ниже:',
                 btnText: 'Сменить пароль',
                 targetLink: `${process.env.SERVER_HOST}/api/user/reset-password?confirmation-token=${resetToken}&email=${encodeURIComponent(email)}`,
-                secondaryText: 'Если Вы не совершали этого действия, просто проигнорируйте это письмо.',
+                secondaryText: '<p>Если Вы не совершали этого действия, просто проигнорируйте это письмо.</p>',
             }
         );
     }

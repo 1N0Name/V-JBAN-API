@@ -20,6 +20,7 @@ const {
     InvalidRefreshTokenError,
     UserNotFound,
     InvalidTokenError,
+    TokenExpiredError,
 } = require('../utils/error.helper');
 
 class AuthService {
@@ -44,8 +45,8 @@ class AuthService {
         if (!isPasswordValid) {
             throw new InvalidCredentialsError();
         }
-
-        const accessTokenValue = TokenHelper.generateAccessToken(person, accessToken.salt, accessToken.expired);
+        
+        const accessTokenValue = TokenHelper.generateAccessToken({ id: person.id, }, accessToken.salt, accessToken.expired);
         const refreshTokenValue = TokenHelper.generateRefreshToken(refreshToken.salt, refreshToken.expired);
 
         await Token.create({ person_id: person.id, token: refreshTokenValue });
@@ -61,7 +62,7 @@ class AuthService {
 
         const invite = await Invite.findOne({ where: { token } });
         if (!invite) {
-            throw new Error("Invite link not found.");
+            throw new TokenExpiredError();
         }
 
         try {
@@ -76,7 +77,7 @@ class AuthService {
 
         await invite.destroy();
 
-        return { status_msg: "Вы были успешно добавлены в проект!" };
+        return { status_msg: 'Вы были успешно добавлены в проект!' };
     }
 
     async getRegisterPage(queryString) {
@@ -111,7 +112,7 @@ class AuthService {
                 mainText: 'Благодарим Вас за регистрацию аккаунта в V-JBAN. Чтобы завершить процесс регистрации, пожалуйста, нажмите на кнопку ниже для подтверждения Вашего адреса электронной почты.',
                 btnText: 'Подтвердить электронную почту',
                 targetLink: `${process.env.SERVER_HOST}/api/claim-account?confirmation-token=${confirmationCode}&email=${encodeURIComponent(email)}`,
-                secondaryText: 'Если Вы не регистрировались в нашем приложении, просто проигнорируйте это письмо.',
+                secondaryText: '<p>Если Вы не регистрировались в нашем приложении, просто проигнорируйте это письмо.</p>',
             }
         );
     }
